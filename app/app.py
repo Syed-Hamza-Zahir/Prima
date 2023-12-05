@@ -3,6 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import logging
 from sqlalchemy.exc import SQLAlchemyError
+import os
+
+# Load environment variables
+DATABASE_URI = os.environ.get('DATABASE_URI', 'sqlite:///users.db')
 
 # Set up logging to write logs to a file
 logging.basicConfig(filename='app.log', level=logging.DEBUG,
@@ -11,8 +15,8 @@ logging.basicConfig(filename='app.log', level=logging.DEBUG,
 # Create Flask app
 app = Flask("Prima")
 
-# Configure SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+# Configure database
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
 db = SQLAlchemy(app)
 
 # Define User model for the database
@@ -94,5 +98,5 @@ if __name__ == '__main__':
         # Create the database tables
         db.create_all()
 
-    # Run the Flask app
-    app.run()
+    # Run the Flask app without debug mode
+    app.run(debug=False)
