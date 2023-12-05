@@ -1,19 +1,19 @@
-# Import necessary modules from Flask
 from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
-# Create Flask app named "Prima"
+# Create Flask app
 app = Flask("Prima")
 
-# Define a simple in-memory database for now
-user_db = {}
+# Configure SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+db = SQLAlchemy(app)
 
-# Create a simple User class for the data model
-class User:
-    def __init__(self, user_id, username, email, password):
-        self.user_id = user_id
-        self.username = username
-        self.email = email
-        self.password = password
+# Define User model for the database
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    password = db.Column(db.String(60), nullable=False)
 
 # API Endpoint to create a new user
 @app.route('/api/users', methods=['POST'])
@@ -25,27 +25,37 @@ def create_user():
     if 'username' not in data or 'email' not in data or 'password' not in data:
         return jsonify({'error': 'Invalid data. Required fields: username, email, password'}), 400
 
-    # Generate a unique user ID 
-    user_id = len(user_db) + 1
-
     # Create a new User object
-    new_user = User(user_id, data['username'], data['email'], data['password'])
+    new_user = User(username=data['username'], email=data['email'], password=data['password'])
 
-    # Store the user in the database
-    user_db[user_id] = new_user.__dict__
+    # Add the new user to the database session
+    db.session.add(new_user)
 
-    return jsonify({'message': 'User created successfully', 'user_id': user_id}), 201
+    # Commit the changes to the database
+    db.session.commit()
+
+    # Return a response indicating success
+    return jsonify({'message': 'User created successfully', 'user_id': new_user.id}), 201
 
 # API Endpoint to retrieve user information by user ID
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
-    # Check if the user ID exists in the database
-    if user_id not in user_db:
+    # Query the database for the user with the given ID
+    user = User.query.get(user_id)
+
+    # Check if the user was not found
+    if user is None:
         return jsonify({'error': 'User not found'}), 404
 
-    # Return user information
-    return jsonify(user_db[user_id])
+    # Return user information in the response
+    return jsonify({'user_id': user.id, 'username': user.username, 'email': user.email})
 
 # Run the Flask app
 if __name__ == '__main__':
+    # Create the application context before running the app
+    with app.app_context():
+        # Create the database tables
+        db.create_all()
+
+    # Run the Flask app
     app.run(debug=True)
