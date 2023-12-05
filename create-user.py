@@ -8,7 +8,33 @@ api_url = "http://localhost:5000/api/users"
 # Example user data
 username = input("Enter username: ")
 email = input("Enter email: ")
-password = input("Enter password: ")
+
+# Validate password input
+while True:
+    password = input("Enter password: ")
+
+    # Check for minimum character limit
+    if len(password) < 8:
+        print("Password must be at least 8 characters long.")
+        continue
+
+    # Check for at least one capital letter
+    if not any(char.isupper() for char in password):
+        print("Password must contain at least one capital letter.")
+        continue
+
+    # Check for at least one number
+    if not any(char.isdigit() for char in password):
+        print("Password must contain at least one number.")
+        continue
+
+    # Check for at least one special character
+    if not re.search(r'[!@#$%^&*()_+{}|":;<>,.?/~`]', password):
+        print("Password must contain at least one special character.")
+        continue
+
+    # All checks passed, break out of the loop
+    break
 
 # Hash the password using bcrypt
 hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
