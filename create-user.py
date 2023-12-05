@@ -1,4 +1,6 @@
 import requests
+import bcrypt
+import re
 
 # Define the API endpoint
 api_url = "http://localhost:5000/api/users"
@@ -6,13 +8,16 @@ api_url = "http://localhost:5000/api/users"
 # Example user data
 username = input("Enter username: ")
 email = input("Enter email: ")
-password = input("Entre password: ")
+password = input("Enter password: ")
+
+# Hash the password using bcrypt
+hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 # Create user data dictionary
 user_data = {
     "username": username,
     "email": email,
-    "password": password
+    "password": hashed_password.decode('utf-8')  # Decode the bytes to string for JSON serialization
 }
 
 # Make a POST request to create the user
