@@ -1,6 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+import logging
+from sqlalchemy.exc import SQLAlchemyError
+
+# Set up logging to write logs to a file
+logging.basicConfig(filename='app.log', level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s')  # Change the level as needed
 
 # Create Flask app
 app = Flask("Prima")
@@ -49,9 +55,13 @@ def create_user():
         # Return a response indicating success
         return jsonify({'message': 'User created successfully', 'user_id': new_user.id}), 201
 
+    except SQLAlchemyError as e:
+        # Log the specific database-related exception
+        logging.error(f"Database error occurred: {str(e)}")
+        return jsonify({'error': 'Database error'}), 500
     except Exception as e:
-        # Log the exception for debugging purposes
-        print(f"An error occurred: {str(e)}")
+        # Log other exceptions for debugging purposes
+        logging.error(f"An error occurred: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
 # API Endpoint to retrieve user information by user ID
@@ -68,9 +78,13 @@ def get_user(user_id):
         # Return user information in the response
         return jsonify({'user_id': user.id, 'username': user.username, 'email': user.email})
 
+    except SQLAlchemyError as e:
+        # Log the specific database-related exception
+        logging.error(f"Database error occurred: {str(e)}")
+        return jsonify({'error': 'Database error'}), 500
     except Exception as e:
-        # Log the exception for debugging purposes
-        print(f"An error occurred: {str(e)}")
+        # Log other exceptions for debugging purposes
+        logging.error(f"An error occurred: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
 # Run the Flask app
@@ -81,4 +95,4 @@ if __name__ == '__main__':
         db.create_all()
 
     # Run the Flask app
-    app.run(debug=True)
+    app.run()
