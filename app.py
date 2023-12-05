@@ -23,43 +23,55 @@ class User(db.Model):
 # API Endpoint to create a new user
 @app.route('/api/users', methods=['POST'])
 def create_user():
-    # Get JSON data from the request
-    data = request.json
+    try:
+        # Get JSON data from the request
+        data = request.json
 
-    # Validate input data
-    if 'username' not in data or 'email' not in data or 'password' not in data:
-        return jsonify({'error': 'Invalid data. Required fields: username, email, password'}), 400
+        # Validate input data
+        if 'username' not in data or 'email' not in data or 'password' not in data:
+            return jsonify({'error': 'Invalid data. Required fields: username, email, password'}), 400
 
-    # Check if the email already exists
-    existing_user = User.query.filter_by(email=data['email']).first()
-    if existing_user:
-        return jsonify({'error': 'Email already exists'}), 400
+        # Check if the email already exists
+        existing_user = User.query.filter_by(email=data['email']).first()
+        if existing_user:
+            return jsonify({'error': 'Email already exists'}), 400
 
-    # Create a new User object and set the hashed password
-    new_user = User(username=data['username'], email=data['email'])
-    new_user.set_password(data['password'])
+        # Create a new User object and set the hashed password
+        new_user = User(username=data['username'], email=data['email'])
+        new_user.set_password(data['password'])
 
-    # Add the new user to the database session
-    db.session.add(new_user)
+        # Add the new user to the database session
+        db.session.add(new_user)
 
-    # Commit the changes to the database
-    db.session.commit()
+        # Commit the changes to the database
+        db.session.commit()
 
-    # Return a response indicating success
-    return jsonify({'message': 'User created successfully', 'user_id': new_user.id}), 201
+        # Return a response indicating success
+        return jsonify({'message': 'User created successfully', 'user_id': new_user.id}), 201
+
+    except Exception as e:
+        # Log the exception for debugging purposes
+        print(f"An error occurred: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 # API Endpoint to retrieve user information by user ID
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
-    # Query the database for the user with the given ID
-    user = User.query.get(user_id)
+    try:
+        # Query the database for the user with the given ID
+        user = User.query.get(user_id)
 
-    # Check if the user was not found
-    if user is None:
-        return jsonify({'error': 'User not found'}), 404
+        # Check if the user was not found
+        if user is None:
+            return jsonify({'error': 'User not found'}), 404
 
-    # Return user information in the response
-    return jsonify({'user_id': user.id, 'username': user.username, 'email': user.email})
+        # Return user information in the response
+        return jsonify({'user_id': user.id, 'username': user.username, 'email': user.email})
+
+    except Exception as e:
+        # Log the exception for debugging purposes
+        print(f"An error occurred: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 # Run the Flask app
 if __name__ == '__main__':
