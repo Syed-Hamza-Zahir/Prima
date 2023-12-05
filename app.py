@@ -20,10 +20,6 @@ class User(db.Model):
         # Set the user's password using password hashing.
         self.password_hash = generate_password_hash(password)
 
-    def check_password(self, password):
-        # Check if the provided password matches the stored hashed password.
-        return check_password_hash(self.password_hash, password)
-
 # API Endpoint to create a new user
 @app.route('/api/users', methods=['POST'])
 def create_user():
