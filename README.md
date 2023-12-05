@@ -36,3 +36,96 @@ python -m venv venv
 # OR
 source venv/bin/activate  # On macOS/Linux
 pip install -r requirements.txt
+
+### Running the Server
+```bash
+
+cd app
+python app.py
+```
+The server will be running at http://localhost:5000.
+```
+### Running the Server
+```bash
+
+cd app
+python app.py
+```
+The server will be running at http://localhost:5000.
+
+## API Endpoints
+### 1. Create User
+Endpoint: POST /api/users
+Request Format: JSON
+Response Format: JSON
+
+### 2. Get User
+Endpoint: GET /api/users/{user_id}
+Response Format: JSON
+
+### Request/Response Formats
+Create User (POST /api/users)
+Request Format:
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+Response Format:
+
+```json
+{
+  "message": "string",
+  "user_id": "int"
+}
+```
+Get User (GET /api/users/{user_id})
+Response Format:
+
+```json
+
+{
+  "user_id": "int",
+  "username": "string",
+  "email": "string",
+}
+```
+## Examples
+### Create User Example
+Request:
+
+```json
+{
+  "username": "john_doe",
+  "email": "john@example.com",
+  "password": "SecurePassword123!"
+}
+```
+Response:
+
+```json
+{
+  "message": "User created successfully",
+  "user_id": 1
+}
+```
+
+### Get User Example
+Response:
+
+```json
+{
+  "user_id": 1,
+  "username": "john_doe",
+  "email": "john@example.com",
+}
+```
+## Error Handling
+- 400 Bad Request: Invalid input data.
+- 404 Not Found: User not found.
+- 500 Internal Server Error: Server error.
+
+# Conclusion
+Thank you for using My Flask API! If you have any questions or issues, please contact smhzahir@googlemail.com.
