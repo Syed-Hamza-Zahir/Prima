@@ -1,5 +1,4 @@
 import requests
-import bcrypt
 import re
 
 # Define the API endpoint
@@ -10,7 +9,7 @@ username = input("Enter username: ")
 email = input("Enter email: ")
 
 # Validate password input
-while True:
+while True: 
     password = input("Enter password: ")
 
     # Check for minimum character limit
@@ -36,14 +35,11 @@ while True:
     # All checks passed, break out of the loop
     break
 
-# Hash the password using bcrypt
-hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
 # Create user data dictionary
 user_data = {
     "username": username,
     "email": email,
-    "password": hashed_password.decode('utf-8')  # Decode the bytes to string for JSON serialization
+    "password": password
 }
 
 # Make a POST request to create the user

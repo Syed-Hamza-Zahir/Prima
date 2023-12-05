@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Create Flask app
 app = Flask("Prima")
@@ -13,7 +14,15 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-    password = db.Column(db.String(60), nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+
+    def set_password(self, password):
+        # Set the user's password using password hashing.
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        # Check if the provided password matches the stored hashed password.
+        return check_password_hash(self.password_hash, password)
 
 # API Endpoint to create a new user
 @app.route('/api/users', methods=['POST'])
@@ -25,8 +34,14 @@ def create_user():
     if 'username' not in data or 'email' not in data or 'password' not in data:
         return jsonify({'error': 'Invalid data. Required fields: username, email, password'}), 400
 
-    # Create a new User object
-    new_user = User(username=data['username'], email=data['email'], password=data['password'])
+    # Check if the email already exists
+    existing_user = User.query.filter_by(email=data['email']).first()
+    if existing_user:
+        return jsonify({'error': 'Email already exists'}), 400
+
+    # Create a new User object and set the hashed password
+    new_user = User(username=data['username'], email=data['email'])
+    new_user.set_password(data['password'])
 
     # Add the new user to the database session
     db.session.add(new_user)
