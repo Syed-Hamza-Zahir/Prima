@@ -2,7 +2,7 @@ import requests
 import re
 
 # Define the API endpoint
-api_url = "http://localhost:5000/api/users"
+api_url = "http://localhost:8080/api/users"
 
 # Example user data
 username = input("Enter username: ")

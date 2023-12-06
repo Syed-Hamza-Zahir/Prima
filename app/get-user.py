@@ -1,7 +1,7 @@
 import requests
 
 # Define the API endpoint
-api_url = "http://localhost:5000/api/users"
+api_url = "http://localhost:8080/api/users"
 
 # Get user ID from the user
 user_id = input("Enter user ID: ")
