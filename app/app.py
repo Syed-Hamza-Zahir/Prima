@@ -98,6 +98,7 @@ if __name__ == '__main__':
         # Create the database tables
         db.create_all()
 
-    # Run the Flask app without debug mode on port 8080
-    app.run(debug=False, port=8080)
+    # Flask development server to run with debugging disabled, to listen on all network interfaces, and to use port 8080.
+    app.run(debug=False, host='0.0.0.0', port=8080)
+
 
