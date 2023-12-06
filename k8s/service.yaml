@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-api-service
+spec:
+  selector:
+    app: flask-api
+  ports:
+    - protocol: TCP
+      port: 80  # Port within the cluster
+      targetPort: 8080  # Port on which your API server is running in the container
+  type: NodePort  # Expose the service on a NodePort for external access
