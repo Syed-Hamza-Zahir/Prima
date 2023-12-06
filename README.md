@@ -145,7 +145,7 @@ To build the Docker image for the API server, follow these steps:
 After building the Docker image, you can run the container with the following command:
 
 ```bash
-docker run -p 8080:80 --name your-container-name -d your-image-name:latest
+docker run -p 8080:8080 --name your-container-name -d your-image-name:latest
 
 # Conclusion
 Thank you for using My Flask API! If you have any questions or issues, please contact smhzahir@googlemail.com.
