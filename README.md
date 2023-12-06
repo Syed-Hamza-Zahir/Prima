@@ -127,5 +127,25 @@ Response:
 - 404 Not Found: User not found.
 - 500 Internal Server Error: Server error.
 
+## Dockerisation
+
+### Building the Docker Image
+To build the Docker image for the API server, follow these steps:
+
+1. Ensure you have Docker installed on your machine.
+2. Navigate to the root directory of the project.
+3. Run the following command:
+
+    ```bash
+    docker build -t your-image-name:latest .
+    ```
+
+### Running the Docker Container
+
+After building the Docker image, you can run the container with the following command:
+
+```bash
+docker run -p 8080:80 --name your-container-name -d your-image-name:latest
+
 # Conclusion
 Thank you for using My Flask API! If you have any questions or issues, please contact smhzahir@googlemail.com.
