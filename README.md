@@ -1,6 +1,6 @@
 # Prima Flask API
 
-Prima is a simple Flask API for user creation and retrieval, featuring a SQLite database and environment variable-based configuration.
+This is a simple Flask API for user creation and retrieval, featuring a SQLite database. It is first complied into a docker image and later deployed in a kubernetes cluster.
 
 ## Table of Contents
 
@@ -47,8 +47,8 @@ cd Prima
 python -m venv venv
 .\venv\Scripts\activate  # On Windows
 ```
+or 
 
-# OR
 ```bash
 source venv/bin/activate  # On macOS/Linux
 pip install -r requirements.txt
@@ -210,6 +210,14 @@ You should see your locally copied image in the list.
 
 ### Apply Manifests
 Deploy your API server and service to the Minikube cluster. Check deployment by verifying that your API server and service resources are running and have the desired configurations.
+
+## Note: Make sure to apply these YAML files in the correct order:
+
+Apply the PersistentVolume (PV) YAML: ```kubectl apply -f pv.yaml```
+Apply the PersistentVolumeClaim (PVC) YAML: ```kubectl apply -f pvc.yaml```
+Apply the Deployment YAML: ```kubectl apply -f deployment.yaml```
+This order ensures that the PersistentVolume is available before the PersistentVolumeClaim and Deployment are created.
+
 ```bash
 kubectl get pods
 kubectl get deployments
@@ -240,5 +248,37 @@ Check connectivity as so or use the 'k8s-create-user.py':
 ```bash
 curl http://127.0.0.1:59219/api/users
 ```
+
+## TODO:
+## NExt, we wait to filesystem between the pods to be in sync. for this create a folder /data/minikube/ in the minikube container
+
+## Create a Persistent Volume (PV):
+Define a Persistent Volume that represents the physical storage. For SQLite databases, a ReadWriteOnce access mode might be appropriate.
+
+Apply the PV:
+```bash
+kubectl apply -f pv.yaml
+```
+## Create a Persistent Volume Claim (PVC):
+Define a Persistent Volume Claim that requests a specific amount of storage. Pods can use PVCs to use storage.
+
+Apply the PVC:
+
+```bash
+kubectl apply -f pvc.yaml
+```
+
+## Mount the PVC in Pods:
+In your deployment YAML, mount the PVC into the desired path in your pods.
+
+
+Apply the deployment:
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+Now, the SQLite database file will be shared among the pods through the PVC. Any changes made to the database by one pod will be visible to other pods sharing the same PVC.
+
 # Conclusion
 Thank you for using My Flask API! If you have any questions or issues, please contact smhzahir@googlemail.com.

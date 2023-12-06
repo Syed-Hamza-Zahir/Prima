@@ -3,7 +3,7 @@ import re
 
 # Define the API endpoint
 # TODO: Need to use a varaible here
-api_url = "http://127.0.0.1:59219/api/users"
+api_url = "http://127.0.0.1:61646/api/users"
 
 # Example user data
 username = input("Enter username: ")
