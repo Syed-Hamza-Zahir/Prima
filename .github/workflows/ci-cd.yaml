@@ -83,8 +83,25 @@ jobs:
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/deployment.yaml
 
-      - name: Wait for Deployment to be ready
-        run: kubectl rollout status deployment/flask-api-deployment
+          - name: Wait for 1 minute
+          run: sleep 60
+    
+      - name: Debugging Steps
+        run: |
+          # Get pods name
+          kubectl get pods
+  
+          # Print deployments 
+          kubectl get deployment
+  
+          # Get pod name
+          POD_NAME=$(kubectl get pod -l app=flask-api -o jsonpath='{.items[0].metadata.name}')
+      
+          # Print pod logs
+          kubectl logs $POD_NAME
+      
+          # Describe the pod for detailed information
+          kubectl describe pod $POD_NAME
   
       - name: Test Deployment
         run: |
