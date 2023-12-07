@@ -64,18 +64,18 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-  
+
       - name: Set up Minikube
         run: |
           sudo apt-get update
           sudo apt-get install -y conntrack
           minikube start
-  
+
       - name: Build and Tag Docker Image within Minikube
         run: |
           eval $(minikube docker-env)
           docker build -t minikube/prima:v2 .
-          
+            
       - name: Deploy to Minikube
         run: |
           kubectl apply -f k8s/pv.yaml
@@ -83,17 +83,17 @@ jobs:
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/deployment.yaml
 
-          - name: Wait for 1 minute
-          run: sleep 60
-    
+          # Wait for 1 minute
+          sleep 60
+      
       - name: Debugging Steps
         run: |
           # Get pods name
           kubectl get pods
-  
+
           # Print deployments 
           kubectl get deployment
-  
+
           # Get pod name
           POD_NAME=$(kubectl get pod -l app=flask-api -o jsonpath='{.items[0].metadata.name}')
       
@@ -102,34 +102,32 @@ jobs:
       
           # Describe the pod for detailed information
           kubectl describe pod $POD_NAME
-  
+
       - name: Test Deployment
         run: |
           # Get the NodePort assigned to the service
-          NODE_PORT=$(kubectl get svc prima-service -o jsonpath='{.spec.ports[0].nodePort}')
+          NODE_PORT=$(kubectl get svc flask-api-service -o jsonpath='{.spec.ports[0].nodePort}')
           
           # Wait for the service to be available
-          kubectl wait --for=condition=ready pod -l app=prima-app --timeout=120s
-  
+          kubectl wait --for=condition=ready pod -l app=flask-api --timeout=120s
+
           # Test if the service is accessible using curl
           curl_result=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$NODE_PORT/api/users)
-  
+
           if [ $curl_result -eq 200 ]; then
             echo "Curl test successful!"
           else
             echo "Curl test failed with status code: $curl_result"
             exit 1
           fi
-  
+
           # Check if PV and PVC are bound
           PV_STATUS=$(kubectl get pv your-pv-name -o jsonpath='{.status.phase}')
           PVC_STATUS=$(kubectl get pvc your-pvc-name -o jsonpath='{.status.phase}')
-  
+
           if [ "$PV_STATUS" == "Bound" ] && [ "$PVC_STATUS" == "Bound" ]; then
             echo "PV and PVC are bound!"
           else
             echo "PV or PVC is not bound."
             exit 1
           fi
-    
-      
