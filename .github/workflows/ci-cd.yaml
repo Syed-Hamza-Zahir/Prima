@@ -73,6 +73,11 @@ jobs:
 
       - name: Check Minikube Status
         run: minikube status
+      
+      - name: Debug Environment Variables
+        run: |
+          echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
+          echo "DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}"
         
       - name: Pull Docker Image from Docker Hub
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2
