@@ -83,8 +83,17 @@ jobs:
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/deployment.yaml
 
-          # Wait for 1 minute
-          sleep 60
+      - name: Check if PV and PVC are Bound
+        run: |
+          PV_STATUS=$(kubectl get pv your-pv-name -o jsonpath='{.status.phase}')
+          PVC_STATUS=$(kubectl get pvc your-pvc-name -o jsonpath='{.status.phase}')
+
+          if [ "$PV_STATUS" == "Bound" ] && [ "$PVC_STATUS" == "Bound" ]; then
+            echo "PV and PVC are bound!"
+          else
+            echo "PV or PVC is not bound."
+            exit 1
+          fi
 
       - name: Wait for Pods to be Ready
         run: |
@@ -99,6 +108,8 @@ jobs:
           # Get the NodePort assigned to the service
           NODE_PORT=$(kubectl get svc flask-api-service -o jsonpath='{.spec.ports[0].nodePort}')
           echo "NodePort: $NODE_PORT"
+
+          kubectl get pods
       
           # Test if the service is accessible using curl (with GET method)
           curl_result=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://$127.0.0.1:$NODE_PORT/api/users)
@@ -111,14 +122,4 @@ jobs:
           fi
         
 
-      - name: Check if PV and PVC are Bound
-        run: |
-          PV_STATUS=$(kubectl get pv your-pv-name -o jsonpath='{.status.phase}')
-          PVC_STATUS=$(kubectl get pvc your-pvc-name -o jsonpath='{.status.phase}')
 
-          if [ "$PV_STATUS" == "Bound" ] && [ "$PVC_STATUS" == "Bound" ]; then
-            echo "PV and PVC are bound!"
-          else
-            echo "PV or PVC is not bound."
-            exit 1
-          fi
