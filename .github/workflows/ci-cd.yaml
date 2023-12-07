@@ -50,6 +50,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker Image
-        run: docker build -t prima:v2 .
-
+        run: |
+          docker build -t prima:v2 .
+          docker images  # Add this line to display the list of Docker images
  
