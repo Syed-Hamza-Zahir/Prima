@@ -88,11 +88,11 @@ jobs:
       
       - name: Debugging Steps
         run: |
+          # Describe deployment 
+          kubectl describe deployment flask-api-deployment
+
           # Get pods name
           kubectl get pods
-
-          # Print deployments 
-          kubectl get deployment
 
           # Get pod name
           POD_NAME=$(kubectl get pod -l app=flask-api -o jsonpath='{.items[0].metadata.name}')
