@@ -45,21 +45,22 @@ jobs:
   dockerise:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
+  
       - name: Build Docker Image
-        run: |
-          docker build -t prima:v2 .
-          docker tag prima:v2 prima:v2 
-          docker images  # Add this line to display the list of Docker images
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2 .
+      
+      - name: Log in to Docker Hub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Push Docker Image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2
           
   deploy:
     needs: dockerise
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -70,15 +71,11 @@ jobs:
           sudo apt-get install -y conntrack
           minikube start
 
-      - name: Save Docker Image to Tar File
-        run: docker save -o prima_v2.tar prima:v2
-  
-      - name: Copy Tar File to Minikube
-        run: minikube ssh -- sudo mkdir -p /tmp/images && sudo cp /mnt/data/prima_v2.tar /tmp/images/
-  
-      - name: Load Docker Image in Minikube
-        run: minikube ssh -- sudo docker load -i /tmp/images/prima_v2.tar
-    
+      - name: Pull Docker Image from Docker Hub
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2
+
+      - name: Tag Docker Image for Minikube
+        run: eval $(minikube docker-env) && docker tag ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2 minikube/prima:v2
 
       - name: Deploy to Minikube
         run: |
@@ -86,4 +83,5 @@ jobs:
           kubectl apply -f k8s/pvc.yaml
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/deployment.yaml
+        
  
