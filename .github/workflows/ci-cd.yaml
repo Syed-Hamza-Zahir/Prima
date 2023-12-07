@@ -85,8 +85,8 @@ jobs:
 
       - name: Check if PV and PVC are Bound
         run: |
-          PV_STATUS=$(kubectl get pv your-pv-name -o jsonpath='{.status.phase}')
-          PVC_STATUS=$(kubectl get pvc your-pvc-name -o jsonpath='{.status.phase}')
+          PV_STATUS=$(kubectl get pv sqlite-pv -o jsonpath='{.status.phase}')
+          PVC_STATUS=$(kubectl get pvc sqlite-pvc -o jsonpath='{.status.phase}')
 
           if [ "$PV_STATUS" == "Bound" ] && [ "$PVC_STATUS" == "Bound" ]; then
             echo "PV and PVC are bound!"
@@ -112,7 +112,7 @@ jobs:
           kubectl get pods
       
           # Test if the service is accessible using curl (with GET method)
-          curl_result=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://$127.0.0.1:$NODE_PORT/api/users)
+          curl_result=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://127.0.0.1:$NODE_PORT/api/users)
       
           if [ $curl_result -eq 200 ]; then
             echo "Curl test successful!"
