@@ -101,7 +101,7 @@ jobs:
           echo "NodePort: $NODE_PORT"
       
           # Test if the service is accessible using curl (with GET method)
-          curl_result=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://$MINIKUBE_IP:$NODE_PORT/api/users)
+          curl_result=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://$127.0.0.1:$NODE_PORT/api/users)
       
           if [ $curl_result -eq 200 ]; then
             echo "Curl test successful!"
