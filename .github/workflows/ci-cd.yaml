@@ -74,7 +74,7 @@ jobs:
       - name: Build and Tag Docker Image within Minikube
         run: |
           eval $(minikube docker-env)
-          docker build -t minikube/prima:v2 .
+          docker build -t prima:v2 .
             
       - name: Deploy to Minikube
         run: |
