@@ -28,7 +28,9 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
       - [Step 4: Verify the Loaded Image](#step-4-verify-the-loaded-image)
    - [Apply Manifests](#apply-manifests)
    - [Access the API](#access-the-api)
-7. [Conclusion](#conclusion)
+7. [GitHub Actions](#github-actions)
+   - [Super-Linter](#super-linter)
+8. [Conclusion](#conclusion)
 
 ## Getting Started
 
@@ -186,11 +188,11 @@ docker save -o local-image.tar your-image-name:tag
 There are other ways to load the image if the following doesn't work such as ```docker cp``` the tar image into the minikube docker container and ```docker load -i tar image```. 
 
 ### Step 2: Copy the Tar File to Minikube
-Copy the tar file (local-image.tar) to the Minikube VM. You can use the minikube scp command for this. 
+Copy the tar file (local-image.tar) to the Minikube VM. 
 ```bash
 minikube scp local-image.tar minikube:/tmp
 ```
-This command copies the tar file to the /tmp directory inside the Minikube VM.
+This command copies the tar file to the /tmp directory inside the Minikube VM:
 
 ### Step 3: Load the Docker Image in Minikube
 SSH into the Minikube VM and run the following commands to load the Docker image:
@@ -243,13 +245,10 @@ Now, you can access your API using the Minikube IP address and NodePort. Run the
 ```bash
 minikube service --url your-api-service
 ```
-Check connectivity as so or use the 'k8s-create-user.py': 
+Check connectivity as so, or use the 'k8s-create-user.py': 
 ```bash
 curl http://127.0.0.1:59219/api/users
 ```
-
-## TODO:
-## NExt, we wait to filesystem between the pods to be in sync. for this create a folder /data/minikube/ in the minikube container
 
 ## Create a Persistent Volume (PV):
 Define a Persistent Volume that represents the physical storage. For SQLite databases, a ReadWriteOnce access mode might be appropriate.
@@ -279,5 +278,16 @@ kubectl apply -f deployment.yaml
 
 Now, the SQLite database file will be shared among the pods through the PVC. Any changes made to the database by one pod will be visible to other pods sharing the same PVC.
 
+# GitHub Actions
+
+## Super-Linter
+
+Integrate Super-Linter into your GitHub Actions workflow to automatically lint various types of files in your repository.
+Create a GitHub Actions workflow YAML file (e.g., `.github/workflows/super-linter.yml`) for example, I've used [this workflow](https://github.com/devopsjourney1/mygitactions/tree/main)
+This workflow will run Super-Linter on each push to the main branch.
+
+
+
+Conclusion
 # Conclusion
 Thank you for using My Flask API! If you have any questions or issues, please contact smhzahir@googlemail.com.
