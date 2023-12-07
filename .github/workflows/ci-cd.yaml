@@ -53,6 +53,7 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build -t prima:v2 .
+          docker tag prima:v2 prima:v2 
           docker images  # Add this line to display the list of Docker images
           
   deploy:
