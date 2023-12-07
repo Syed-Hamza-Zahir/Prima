@@ -82,6 +82,9 @@ jobs:
       - name: Pull Docker Image from Docker Hub
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2
 
+      - name: View local images
+        run: docker images
+        
       - name: Tag Docker Image for Minikube
         run: eval $(minikube docker-env) && docker tag ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2 minikube/prima:v2
 
