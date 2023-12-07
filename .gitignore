@@ -1,3 +1,5 @@
 instance/
 venv/
 app.log
+data/
+prima.tar

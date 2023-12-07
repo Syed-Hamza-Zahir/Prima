@@ -14,13 +14,13 @@ spec:
     spec:
       containers:
       - name: prima
-        image: prima:v1
+        image: prima:v2
         ports:
         - containerPort: 8080
         volumeMounts:
-          - name: sqlite-data
+          - name: sqlite-pvc
             mountPath: /app/instance
       volumes:
-        - name: sqlite-data
+        - name: sqlite-pvc
           persistentVolumeClaim:
-            claimName: sqlite-data
+            claimName: sqlite-pvc

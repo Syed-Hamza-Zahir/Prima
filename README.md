@@ -175,32 +175,31 @@ Create a Kubernetes Service manifest (service.yaml) to expose your API server wi
 
 ## Copy docker image to minikube 
 To copy a local Docker image into the Minikube environment, you can use the docker save and docker load commands:
-# Note
-There are other ways to load the image if the following doesn't work. 
 
-# Step 1: Save the Docker Image to a Tar File
+
+### Step 1: Save the Docker Image to a Tar File
 Run the following command to save your local Docker image to a tar file.
 ```bash
 docker save -o local-image.tar your-image-name:tag
 ```
-# Note
+### Note
 There are other ways to load the image if the following doesn't work such as ```docker cp``` the tar image into the minikube docker container and ```docker load -i tar image```. 
 
-# Step 2: Copy the Tar File to Minikube
+### Step 2: Copy the Tar File to Minikube
 Copy the tar file (local-image.tar) to the Minikube VM. You can use the minikube scp command for this. 
 ```bash
 minikube scp local-image.tar minikube:/tmp
 ```
 This command copies the tar file to the /tmp directory inside the Minikube VM.
 
-# Step 3: Load the Docker Image in Minikube
+### Step 3: Load the Docker Image in Minikube
 SSH into the Minikube VM and run the following commands to load the Docker image:
 ```bash
 minikube ssh
 docker load -i /tmp/local-image.tar
 ```
 
-# Step 4: Verify the Loaded Image
+### Step 4: Verify the Loaded Image
 Check if the image is loaded into Minikube:
 ```bash
 minikube ssh
@@ -208,10 +207,10 @@ docker images
 ```
 You should see your locally copied image in the list.
 
-### Apply Manifests
+## Apply Manifests
 Deploy your API server and service to the Minikube cluster. Check deployment by verifying that your API server and service resources are running and have the desired configurations.
 
-## Note: Make sure to apply these YAML files in the correct order:
+### Note: Make sure to apply these YAML files in the correct order:
 
 Apply the PersistentVolume (PV) YAML: ```kubectl apply -f pv.yaml```
 Apply the PersistentVolumeClaim (PVC) YAML: ```kubectl apply -f pvc.yaml```
