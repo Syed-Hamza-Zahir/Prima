@@ -67,11 +67,17 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y conntrack
-          docker images # To see images
           minikube start
 
-      - name: Load Docker Image to Minikube
-        run: eval $(minikube docker-env) && docker tag prima:v2 minikube/prima:v2
+      - name: Save Docker Image to Tar File
+        run: docker save -o prima_v2.tar prima:v2
+  
+      - name: Copy Tar File to Minikube
+        run: minikube ssh -- sudo mkdir -p /tmp/images && sudo cp /mnt/data/prima_v2.tar /tmp/images/
+  
+      - name: Load Docker Image in Minikube
+        run: minikube ssh -- sudo docker load -i /tmp/images/prima_v2.tar
+    
 
       - name: Deploy to Minikube
         run: |
