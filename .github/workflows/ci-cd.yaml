@@ -71,6 +71,9 @@ jobs:
           sudo apt-get install -y conntrack
           minikube start
 
+      - name: Check Minikube Status
+        run: minikube status
+        
       - name: Pull Docker Image from Docker Hub
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2
 
