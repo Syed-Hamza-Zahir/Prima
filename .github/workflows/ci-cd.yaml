@@ -42,24 +42,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-  dockerise:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-  
-      - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2 .
-      
-      - name: Log in to Docker Hub
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-      
-      - name: Push Docker Image to Docker Hub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2
+#  dockerise:
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout Repository
+#        uses: actions/checkout@v2
+#  
+#      - name: Build Docker Image
+#        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2 .
+#      
+#      - name: Log in to Docker Hub
+#        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+#      
+#      - name: Push Docker Image to Docker Hub
+#        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2
           
   deploy:
-    needs: dockerise
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -82,7 +82,37 @@ jobs:
           kubectl apply -f k8s/pvc.yaml
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/deployment.yaml
+
+      - name: Wait for Deployment to be ready
+        run: kubectl rollout status deployment/prima-deployment
   
+      - name: Test Deployment
+        run: |
+          # Get the NodePort assigned to the service
+          NODE_PORT=$(kubectl get svc prima-service -o jsonpath='{.spec.ports[0].nodePort}')
+          
+          # Wait for the service to be available
+          kubectl wait --for=condition=ready pod -l app=prima-app --timeout=120s
+  
+          # Test if the service is accessible using curl
+          curl_result=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$NODE_PORT/api/users)
+  
+          if [ $curl_result -eq 200 ]; then
+            echo "Curl test successful!"
+          else
+            echo "Curl test failed with status code: $curl_result"
+            exit 1
+          fi
+  
+          # Check if PV and PVC are bound
+          PV_STATUS=$(kubectl get pv your-pv-name -o jsonpath='{.status.phase}')
+          PVC_STATUS=$(kubectl get pvc your-pvc-name -o jsonpath='{.status.phase}')
+  
+          if [ "$PV_STATUS" == "Bound" ] && [ "$PVC_STATUS" == "Bound" ]; then
+            echo "PV and PVC are bound!"
+          else
+            echo "PV or PVC is not bound."
+            exit 1
+          fi
+    
       
-        
- 
