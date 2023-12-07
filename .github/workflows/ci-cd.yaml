@@ -43,6 +43,7 @@ jobs:
           pip install -r requirements.txt
 
   dockerise:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -55,6 +56,7 @@ jobs:
           docker images  # Add this line to display the list of Docker images
           
   deploy:
+    needs: dockerise
     runs-on: ubuntu-latest
 
     steps:
