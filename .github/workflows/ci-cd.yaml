@@ -64,39 +64,25 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
+  
       - name: Set up Minikube
         run: |
           sudo apt-get update
           sudo apt-get install -y conntrack
           minikube start
-
-      - name: Check Minikube Status
-        run: minikube status
-      
-      - name: Debug Environment Variables
+  
+      - name: Build and Tag Docker Image within Minikube
         run: |
-          echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
-        # echo "DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}"
-        
-      - name: Pull Docker Image from Docker Hub
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2
-
-      - name: View local images
-        run: docker images
-        
-      - name: Tag Docker Image for Minikube
-        run: |
-          eval $(minikube -p minikube docker-env)
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2 minikube/prima:v2
-        shell: bash
-      
-
+          eval $(minikube docker-env)
+          docker build -t minikube/prima:v2 .
+          
       - name: Deploy to Minikube
         run: |
           kubectl apply -f k8s/pv.yaml
           kubectl apply -f k8s/pvc.yaml
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/deployment.yaml
+  
+      
         
  
