@@ -87,8 +87,10 @@ jobs:
         
       - name: Tag Docker Image for Minikube
         run: |
-          docker --host=ssh://$(minikube ip) tag ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2 minikube/prima:v2
+          eval $(minikube -p minikube docker-env)
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/prima:v2 minikube/prima:v2
         shell: bash
+      
 
       - name: Deploy to Minikube
         run: |
