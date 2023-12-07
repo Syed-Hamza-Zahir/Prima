@@ -75,7 +75,7 @@ jobs:
         run: |
           eval $(minikube docker-env)
           docker build -t prima:v2 .
-            
+
       - name: Deploy to Minikube
         run: |
           kubectl apply -f k8s/pv.yaml
@@ -85,31 +85,15 @@ jobs:
 
           # Wait for 1 minute
           sleep 60
-      
-      - name: Debugging Steps
+
+      - name: Wait for Pods to be Ready
         run: |
-          # Describe deployment 
-          kubectl describe deployment flask-api-deployment
-
-          # Get pods name
-          kubectl get pods
-
-          # Get pod name
-          POD_NAME=$(kubectl get pod -l app=flask-api -o jsonpath='{.items[0].metadata.name}')
-      
-          # Print pod logs
-          kubectl logs $POD_NAME
-      
-          # Describe the pod for detailed information
-          kubectl describe pod $POD_NAME
+          kubectl wait --for=condition=ready pod -l app=flask-api --timeout=120s
 
       - name: Test Deployment
         run: |
           # Get the NodePort assigned to the service
           NODE_PORT=$(kubectl get svc flask-api-service -o jsonpath='{.spec.ports[0].nodePort}')
-          
-          # Wait for the service to be available
-          kubectl wait --for=condition=ready pod -l app=flask-api --timeout=120s
 
           # Test if the service is accessible using curl
           curl_result=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$NODE_PORT/api/users)
@@ -121,7 +105,8 @@ jobs:
             exit 1
           fi
 
-          # Check if PV and PVC are bound
+      - name: Check if PV and PVC are Bound
+        run: |
           PV_STATUS=$(kubectl get pv your-pv-name -o jsonpath='{.status.phase}')
           PVC_STATUS=$(kubectl get pvc your-pvc-name -o jsonpath='{.status.phase}')
 
