@@ -100,5 +100,17 @@ jobs:
             NODE_PORT=$(kubectl get svc flask-api-service -o jsonpath='{.spec.ports[0].nodePort}')
             echo "NodePort: $NODE_PORT"
 
-            # Use double quotes around variables in the curl command
-            curl "http://$MINIKUBE_IP:$NODE_PORT"
+            # Use double quotes around variables in the curl command, expect status code 405
+            curl "http://$MINIKUBE_IP:$NODE_PORT/api/user"
+
+            HTTP_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://$MINIKUBE_IP:$NODE_PORT/api/user")
+
+            # Check if the status code is 405
+            if [ "$HTTP_STATUS_CODE" -eq 405 ]; then
+                echo "Test passed! Status code is 405."
+            else
+                echo "Test failed! Status code is $HTTP_STATUS_CODE, expected 405."
+                exit 1
+            fi
+
+
