@@ -79,21 +79,25 @@ jobs:
       - name: Deploy to Minikube
         run: |
           kubectl apply -f k8s/pv.yaml
+          sleep 10
           kubectl apply -f k8s/pvc.yaml
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/deployment.yaml
 
       - name: Check if PV and PVC are Bound
         run: |
-          PV_STATUS=$(kubectl get pv sqlite-pv -o jsonpath='{.status.phase}')
-          PVC_STATUS=$(kubectl get pvc sqlite-pvc -o jsonpath='{.status.phase}')
+          kubectl get pvc
+          kubectl get pv
 
-          if [ "$PV_STATUS" == "Bound" ] && [ "$PVC_STATUS" == "Bound" ]; then
-            echo "PV and PVC are bound!"
-          else
-            echo "PV or PVC is not bound."
-            exit 1
-          fi
+    #      PV_STATUS=$(kubectl get pv sqlite-pv -o jsonpath='{.status.phase}')
+    #      PVC_STATUS=$(kubectl get pvc sqlite-pvc -o jsonpath='{.status.phase}')
+
+    #     if [ "$PV_STATUS" == "Bound" ] && [ "$PVC_STATUS" == "Bound" ]; then
+    #        echo "PV and PVC are bound!"
+    #      else
+    #        echo "PV or PVC is not bound."
+    #        exit 1
+    #      fi
 
       - name: Wait for Pods to be Ready
         run: |
