@@ -355,5 +355,6 @@ Copied Linting Code (Video: https://www.youtube.com/watch?v=mFFXuXjVgkU)
 Learning Tool (Video: https://www.youtube.com/watch?v=9flcoQ1R0Y4)
 GitHub Actions Documentation - Troubleshooting pipeline steps (Docs: https://docs.github.com/en/actions)
 
+VSCode extentions for coding amd formatting assistance for the whole project. 
 
 Thank you for using My Flask API! If you have any questions or issues, please contact smhzahir@googlemail.com.
