@@ -18,3 +18,6 @@ EXPOSE 8080
 
 # Command to run the application
 CMD ["python", "app/app.py"]
+
+# Add a command to exit the root user
+# USER nobody

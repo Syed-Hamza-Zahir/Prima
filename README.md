@@ -8,7 +8,7 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
    - [Prerequisites](#prerequisites)
    - [Installation](#installation)
    - [Running the Server](#running-the-server)
-   - [Test](#Test)
+   - [Testing](#Testing)
 2. [API Endpoints](#api-endpoints)
    - [Create User](#create-user-endpoint)
    - [Get User](#get-user-endpoint)
@@ -17,7 +17,10 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
    - [Get User](#get-user-get-apiusersuser_id)
 4. [Password Strength Validation](#Password-Strength-Validation)
 5. [Error Handling](#error-handling)
-6. [Dockerization](#dockerization)
+6. [Dockerisation](#dockerisation)
+   - [Building the Docker Image](#Building-the-Docker-Image)
+   - [Running the Docker Container](#Running-the-Docker-Container)
+   - [Testing the Docker Container](#Testing-the-Docker-Container)
 7. [Kubernetes Deployment with Minikube](#kubernetes-deployment-with-minikube)
    - [Install Minikube](#install-minikube)
    - [Kubernetes Manifests](#kubernetes-manifests)
@@ -46,7 +49,7 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
 
 ```bash
 git clone https://github.com/Syed-Hamza-Zahir/Prima.git
-cd Prima
+cd Prima/app
 python -m venv venv
 .\venv\Scripts\activate  # On Windows
 ```
@@ -64,7 +67,7 @@ python app.py
 ```
 The server will be running at http://localhost:8080.
 
-## Test
+## Testing
 To verify the proper functioning of the server, you can use the following methods:
 
 - **Curl Endpoint:**
@@ -169,7 +172,7 @@ To build the Docker image for the API server, follow these steps:
 3. Run the following command:
 
 ```bash
-docker build -t your-image-name:latest .
+docker build -t prima:latest .
 ```
 
 ### Running the Docker Container
@@ -177,8 +180,18 @@ docker build -t your-image-name:latest .
 After building the Docker image, you can run the container with the following command:
 
 ```bash
-docker run -p 8080:8080 --name your-container-name -d your-image-name:latest
+docker run -p 8080:8080 --name prima -d prima:latest
 ```
+### Testing the Docker Container
+To verify the proper functioning of the server, you can use the following methods:
+
+- **Curl Endpoint:**
+  ```bash
+  curl http://localhost:8080/api/users
+  ```
+  **Use Scripts:**
+Run the provided 'create-user.py' and 'get-user.py' scripts to test the create and retrieve user endpoints.
+
 # Kubernetes Deployment with Minikube
 ## Install Minikube
 Ensure that you have Minikube installed on your development machine. You can download and install Minikube from the official website [here](https://minikube.sigs.k8s.io/docs/start/)
