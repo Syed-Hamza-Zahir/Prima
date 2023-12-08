@@ -4,16 +4,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import logging
 from sqlalchemy.exc import SQLAlchemyError
 import os
+from logging.handlers import RotatingFileHandler
 
-# Load environment variables
+# Load environment variables, or use defualt 'sqlite:///users.db'
 DATABASE_URI = os.environ.get('DATABASE_URI', 'sqlite:///users.db')
 
-# Set up logging to write logs to a file
-logging.basicConfig(filename='app.log', level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')  # Change the level as needed
+# Set up logging to write logs to a rotating file
+log_handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=1)
+log_handler.setLevel(logging.DEBUG)
+log_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
 # Create Flask app
 app = Flask("Prima")
+app.logger.addHandler(log_handler)
 
 # Configure database
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
@@ -38,13 +41,20 @@ def create_user():
         data = request.json
 
         # Validate input data
-        if 'username' not in data or 'email' not in data or 'password' not in data:
-            return jsonify({'error': 'Invalid data. Required fields: username, email, password'}), 400
+        required_fields = ['username', 'email', 'password']
+        if not all(field in data for field in required_fields):
+            # Log an error and return a response for invalid data
+            error_message = f"Invalid data. Required fields: {', '.join(required_fields)}"
+            app.logger.error(error_message)
+            return jsonify({'error': error_message}), 400
 
         # Check if the email already exists
         existing_user = User.query.filter_by(email=data['email']).first()
         if existing_user:
-            return jsonify({'error': 'Email already exists'}), 400
+            # Log an error and return a response for existing email
+            error_message = 'Email already exists'
+            app.logger.error(error_message)
+            return jsonify({'error': error_message}), 400
 
         # Create a new User object and set the hashed password
         new_user = User(username=data['username'], email=data['email'])
@@ -60,12 +70,12 @@ def create_user():
         return jsonify({'message': 'User created successfully', 'user_id': new_user.id}), 201
 
     except SQLAlchemyError as e:
-        # Log the specific database-related exception
-        logging.error(f"Database error occurred: {str(e)}")
+        # Log the specific database-related exception and return a response
+        app.logger.error(f"Database error occurred: {str(e)}")
         return jsonify({'error': 'Database error'}), 500
     except Exception as e:
-        # Log other exceptions for debugging purposes
-        logging.error(f"An error occurred: {str(e)}")
+        # Log other exceptions for debugging purposes and return a response
+        app.logger.error(f"An error occurred: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
 # API Endpoint to retrieve user information by user ID
@@ -77,18 +87,21 @@ def get_user(user_id):
 
         # Check if the user was not found
         if user is None:
-            return jsonify({'error': 'User not found'}), 404
+            # Log an error and return a response for user not found
+            error_message = 'User not found'
+            app.logger.error(error_message)
+            return jsonify({'error': error_message}), 404
 
         # Return user information in the response
         return jsonify({'user_id': user.id, 'username': user.username, 'email': user.email})
 
     except SQLAlchemyError as e:
-        # Log the specific database-related exception
-        logging.error(f"Database error occurred: {str(e)}")
+        # Log the specific database-related exception and return a response
+        app.logger.error(f"Database error occurred: {str(e)}")
         return jsonify({'error': 'Database error'}), 500
     except Exception as e:
-        # Log other exceptions for debugging purposes
-        logging.error(f"An error occurred: {str(e)}")
+        # Log other exceptions for debugging purposes and return a response
+        app.logger.error(f"An error occurred: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
 # Run the Flask app
@@ -101,5 +114,3 @@ if __name__ == '__main__':
     # Flask development server to run with debugging, to listen on all network interfaces, and to use port 8080.
     # NOTE: This is for dev purposes, turn debug off and only listen on required server for prod env
     app.run(debug=True, host='0.0.0.0', port=8080)
-
-
