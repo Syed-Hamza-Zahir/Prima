@@ -34,6 +34,8 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
       - [Step 4: Verify the Loaded Image](#step-4-verify-the-loaded-image)
    - [Apply Manifests](#apply-manifests)
    - [Access the API](#access-the-api)
+      - [From inside minikube](#from-inside-minikube)
+      - [From local machine](#from-local-machine)
 8. [GitHub Actions](#github-actions)
    - [Super-Linter](#super-linter)
 9. [Conclusion](#conclusion)
