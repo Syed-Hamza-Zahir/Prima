@@ -37,7 +37,11 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
       - [From inside minikube](#from-inside-minikube)
       - [From local machine](#from-local-machine)
 8. [GitHub Actions](#github-actions)
-   - [Super-Linter](#super-linter)
+   - [CI/CD Pipeline](#cicd-pipeline)
+      - [Build Job](#build-job)
+      - [Deploy Job](#deploy-job)
+   - [Instructions](#instructions)
+      - [CI/CD Pipeline](#cicd-pipeline)
 9. [Conclusion](#conclusion)
 
 ## Getting Started
@@ -288,14 +292,49 @@ Check connectivity as so, or use the 'k8s-create-user.py' from within the miniku
 curl http://[minikubeIP]:[nodePort]/api/users
 ```
 
-# GitHub Actions
+# CI/CD Pipeline with GitHub Actions
 
-## Super-Linter
+## Overview
+This repository contains a CI/CD pipeline for building, testing, and deploying a Flask API to Minikube.
 
-Integrate Super-Linter into your GitHub Actions workflow to automatically lint various types of files in your repository.
-Create a GitHub Actions workflow YAML file (e.g., `.github/workflows/super-linter.yml`) for example, I've used [this workflow](https://github.com/devopsjourney1/mygitactions/tree/main)
+## CI/CD Workflow
+The CI/CD workflow is triggered on every push to the main branch.
+
+### Build Job
+
+- **Name:** Build
+- **Runs on:** Ubuntu Latest
+- **Steps:**
+  1. Checkout Repository
+  2. Set up Python
+  3. Install Dependencies
+
+### Deploy Job
+
+- **Name:** Deploy
+- **Needs:** Build
+- **Runs on:** Ubuntu Latest
+- **Steps:**
+  1. Checkout Repository
+  2. Set up Minikube
+  3. Build and Tag Docker Image within Minikube
+  4. Deploy to Minikube
+  5. Check if PV and PVC are Bound
+  6. Wait for Pods to be Ready
+  7. Test Deployment
+
+## Instructions
+
+### CI/CD Pipeline
+
+The CI/CD pipeline is automatically triggered on every push to the main branch. The workflow includes building, testing, and deploying the Flask API to Minikube.
+
+<!-- Uncomment the following lines if you want to include a Super-Lint job -->
+<!-- ## Linting
+
+The repository includes linting using the Super-Linter. This ensures code quality and consistency. -->
+I've used [this workflow](https://github.com/devopsjourney1/mygitactions/tree/main)
 This workflow will run Super-Linter on each push to the main branch.
 
-Conclusion
 # Conclusion
 Thank you for using My Flask API! If you have any questions or issues, please contact smhzahir@googlemail.com.
