@@ -26,6 +26,7 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
    - [Kubernetes Manifests](#kubernetes-manifests)
       - [Deployment](#deployment)
       - [Service](#service)
+      - [Persistent Volume and Persistent Volume Claim](#Persistent-Volume-and-Persistent-Volume-Claim)
    - [Copy Docker Image to Minikube](#copy-docker-image-to-minikube)
       - [Step 1: Save the Docker Image to a Tar File](#step-1-save-the-docker-image-to-a-tar-file)
       - [Step 2: Copy the Tar File to Minikube](#step-2-copy-the-tar-file-to-minikube)
@@ -193,27 +194,34 @@ To verify the proper functioning of the server, you can use the following method
 Run the provided 'create-user.py' and 'get-user.py' scripts to test the create and retrieve user endpoints.
 
 # Kubernetes Deployment with Minikube
+
 ## Install Minikube
 Ensure that you have Minikube installed on your development machine. You can download and install Minikube from the official website [here](https://minikube.sigs.k8s.io/docs/start/)
 
 ## Kubernetes Manifests
 ### Deployment
-Create a Kubernetes Deployment manifest (deployment.yaml) for your API server. Define the desired number of replicas and specify the container image to use. Ensure that your API server is exposed on the correct port.
+I have created a Kubernetes Deployment manifest (deployment.yaml) for the API server. Defined the desired number of replicas and specified the container image to use. 
 
 ### Service
-Create a Kubernetes Service manifest (service.yaml) to expose your API server within the cluster. Use the NodePort type to expose it on a port that can be accessed from outside the cluster.
+I have created a Kubernetes Service manifest (service.yaml) to expose the API server within the cluster. Use the NodePort type to expose it on a port that can be accessed from outside the cluster.
+
+### Persistent Volume and Persistent Volume Claim 
+I have implemented data persistence for the API server using Kubernetes Persistent Volumes (PV) and Persistent Volume Claims (PVC). This ensures that data is retained even if the pod is rescheduled or recreated.
+
+I created a Persistent Volume (`persistent-volume.yaml`) to provide storage resources for the API server. The PV is configured with the necessary capacity, access modes, and storage class.
+
+I created a Persistent Volume Claim (`persistent-volume-claim.yaml`) to request storage resources from the Persistent Volume. The PVC specifies the required capacity and references the storage class defined in the PV.
 
 ## Copy docker image to minikube 
 To copy a local Docker image into the Minikube environment, you can use the docker save and docker load commands:
 
-
 ### Step 1: Save the Docker Image to a Tar File
 Run the following command to save your local Docker image to a tar file.
 ```bash
-docker save -o local-image.tar your-image-name:tag
+docker save -o prima.tar prima:latest
 ```
 ### Note
-There are other ways to load the image if the following doesn't work such as ```docker cp``` the tar image into the minikube docker container and ```docker load -i tar image```. 
+There are other ways to load the image if the following doesn't work such as ```docker cp prima.tar [containerID]:/``` the tar image into the minikube docker container and ```docker load -i prima.tar```. 
 
 ### Step 2: Copy the Tar File to Minikube
 Copy the tar file (local-image.tar) to the Minikube VM. 
@@ -238,13 +246,14 @@ docker images
 You should see your locally copied image in the list.
 
 ## Apply Manifests
-Deploy your API server and service to the Minikube cluster. Check deployment by verifying that your API server and service resources are running and have the desired configurations.
+Deploy your API server, PVC, PV and service to the Minikube cluster. Check deployment by verifying that your API server and service resources are running and have the desired configurations.
 
 ### Note: Make sure to apply these YAML files in the correct order:
 
 Apply the PersistentVolume (PV) YAML: ```kubectl apply -f pv.yaml```
 Apply the PersistentVolumeClaim (PVC) YAML: ```kubectl apply -f pvc.yaml```
 Apply the Deployment YAML: ```kubectl apply -f deployment.yaml```
+Apply the Service YAML:  ```kubectl apply -f service.yaml```
 This order ensures that the PersistentVolume is available before the PersistentVolumeClaim and Deployment are created.
 
 ```bash
@@ -253,9 +262,9 @@ kubectl get deployments
 kubectl get service
 ```
 
-### Access the API
-Access your Python API server through the Minikube IP address and NodePort. You may need to use Minikube commands to retrieve the IP and port.
-To access your Python API server deployed on Minikube, you'll need to follow these steps:
+## Access the API
+### From inside minikube
+Access your Python API server through the Minikube IP address and NodePort. You will need to use Minikube commands to retrieve the IP and port. To access your Python API server deployed on Minikube, you'll need to follow these steps:
 
 Get Minikube IP:
 ```bash
@@ -267,44 +276,15 @@ kubectl get services
 ```
 Look for the service associated with your API, and check the PORT(S) column. The NodePort will be listed there.
 
-Access the API:
-Now, you can access your API using the Minikube IP address and NodePort. Run the following command:
+### From local machine
 
 ```bash
-minikube service --url your-api-service
+minikube service --url flask-api-service
 ```
-Check connectivity as so, or use the 'k8s-create-user.py': 
+Check connectivity as so, or use the 'k8s-create-user.py' from within the minikube container: 
 ```bash
-curl http://127.0.0.1:59219/api/users
+curl http://[minikubeIP]:[nodePort]/api/users
 ```
-
-## Create a Persistent Volume (PV):
-Define a Persistent Volume that represents the physical storage. For SQLite databases, a ReadWriteOnce access mode might be appropriate.
-
-Apply the PV:
-```bash
-kubectl apply -f pv.yaml
-```
-## Create a Persistent Volume Claim (PVC):
-Define a Persistent Volume Claim that requests a specific amount of storage. Pods can use PVCs to use storage.
-
-Apply the PVC:
-
-```bash
-kubectl apply -f pvc.yaml
-```
-
-## Mount the PVC in Pods:
-In your deployment YAML, mount the PVC into the desired path in your pods.
-
-
-Apply the deployment:
-
-```bash
-kubectl apply -f deployment.yaml
-```
-
-Now, the SQLite database file will be shared among the pods through the PVC. Any changes made to the database by one pod will be visible to other pods sharing the same PVC.
 
 # GitHub Actions
 
@@ -313,8 +293,6 @@ Now, the SQLite database file will be shared among the pods through the PVC. Any
 Integrate Super-Linter into your GitHub Actions workflow to automatically lint various types of files in your repository.
 Create a GitHub Actions workflow YAML file (e.g., `.github/workflows/super-linter.yml`) for example, I've used [this workflow](https://github.com/devopsjourney1/mygitactions/tree/main)
 This workflow will run Super-Linter on each push to the main branch.
-
-
 
 Conclusion
 # Conclusion

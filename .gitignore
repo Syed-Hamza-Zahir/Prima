@@ -1,7 +1,5 @@
 instance/
 venv/
 app.log
-data/
 prima.tar
-prima_v2.tar
-.github/
+

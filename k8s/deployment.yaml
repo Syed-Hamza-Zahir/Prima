@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: prima
-        image: prima:v2
+        image: prima:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         volumeMounts:

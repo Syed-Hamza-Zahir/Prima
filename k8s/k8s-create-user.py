@@ -1,9 +1,13 @@
 import requests
+import subprocess
 import re
 
-# Define the API endpoint
-# TODO: Need to use a varaible here
-api_url = "http://127.0.0.1:61646/api/users"
+# Run 'minikube service --url flask-api-service' and capture the output
+# minikube_service_url = subprocess.check_output(['minikube', 'service', '--url', 'flask-api-service'], text=True).strip()
+# api_url = f"{minikube_service_url}/api/users"
+
+# To Do: Above code needs terminal to be open, need further logic
+api_url = "http://127.0.0.1:62571/api/users"
 
 # Example user data
 username = input("Enter username: ")
