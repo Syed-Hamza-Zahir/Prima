@@ -337,24 +337,24 @@ I've used [this workflow](https://github.com/devopsjourney1/mygitactions/tree/ma
 I have utilised the following resources in my work, and while the content is original, I have leveraged these as learning materials and guidance:
 
 Python:
-How to Use SQLite with Flask (Video: https://www.youtube.com/watch?v=tPxUSWTvZAs)
-How to Use jsonify with Flask (Video: https://www.youtube.com/watch?v=_gyPuorc1xo)
+- How to Use SQLite with Flask (Video: https://www.youtube.com/watch?v=tPxUSWTvZAs)
+- How to Use jsonify with Flask (Video: https://www.youtube.com/watch?v=_gyPuorc1xo)
 
 Minikube:
-Initial Setup (Docs: https://minikube.sigs.k8s.io/docs/start/)
-Learning to Use Minikube (Video: https://www.youtube.com/watch?v=E2pP1MOfo3g)
-Minikube Documentation - Troubleshooting my Minikube setup (Docs: https://minikube.sigs.k8s.io/docs/)
-ChatGPT, Reddit, Stack Overflow - Troubleshooting my Minikube setup further
+- Initial Setup (Docs: https://minikube.sigs.k8s.io/docs/start/)
+- Learning to Use Minikube (Video: https://www.youtube.com/watch?v=E2pP1MOfo3g)
+- Minikube Documentation - Troubleshooting my Minikube setup (Docs: https://minikube.sigs.k8s.io/docs/)
+- ChatGPT, Reddit, Stack Overflow - Troubleshooting my Minikube setup further
 
 Kubernetes:
-Assistance with PV & PVC (Docs: https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
-YAML Syntax Checker (https://yamlchecker.com/)
+- Assistance with PV & PVC (Docs: https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+- YAML Syntax Checker (https://yamlchecker.com/)
 
 GitHub Actions:
-Copied Linting Code (Video: https://www.youtube.com/watch?v=mFFXuXjVgkU)
-Learning Tool (Video: https://www.youtube.com/watch?v=9flcoQ1R0Y4)
-GitHub Actions Documentation - Troubleshooting pipeline steps (Docs: https://docs.github.com/en/actions)
+- Copied Linting Code (Video: https://www.youtube.com/watch?v=mFFXuXjVgkU)
+- Learning Tool (Video: https://www.youtube.com/watch?v=9flcoQ1R0Y4)
+- GitHub Actions Documentation - Troubleshooting pipeline steps (Docs: https://docs.github.com/en/actions)
 
-VSCode extentions for coding amd formatting assistance for the whole project. 
+- VSCode extentions for coding amd formatting assistance for the whole project. 
 
 Thank you for using My Flask API! If you have any questions or issues, please contact smhzahir@googlemail.com.
