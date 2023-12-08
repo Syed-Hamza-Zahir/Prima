@@ -5,6 +5,7 @@ import logging
 from sqlalchemy.exc import SQLAlchemyError
 import os
 from logging.handlers import RotatingFileHandler
+import re
 
 # Load environment variables, or use defualt 'sqlite:///users.db'
 DATABASE_URI = os.environ.get('DATABASE_URI', 'sqlite:///users.db')
@@ -48,6 +49,32 @@ def create_user():
             app.logger.error(error_message)
             return jsonify({'error': error_message}), 400
 
+        # Validate password strength
+        password = data['password']
+        # Check for minimum character limit
+        if len(password) < 8:
+            error_message = "Password must be at least 8 characters long."
+            app.logger.error(error_message)
+            return jsonify({'error': error_message}), 400
+
+        # Check for at least one capital letter
+        if not any(char.isupper() for char in password):
+            error_message = "Password must contain at least one capital letter."
+            app.logger.error(error_message)
+            return jsonify({'error': error_message}), 400
+        
+        # Check for at least one number
+        if not any(char.isdigit() for char in password):
+            error_message = "Password must contain at least one number."
+            app.logger.error(error_message)
+            return jsonify({'error': error_message}), 400
+        
+        # Check for at least one special character
+        if not re.search(r'[!@#$%^&*()_+{}|":;<>,.?/~`]', password):
+            error_message = "Password must contain at least one special character."
+            app.logger.error(error_message)
+            return jsonify({'error': error_message}), 400
+        
         # Check if the email already exists
         existing_user = User.query.filter_by(email=data['email']).first()
         if existing_user:

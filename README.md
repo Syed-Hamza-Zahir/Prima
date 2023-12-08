@@ -1,6 +1,6 @@
 # Prima Flask API
 
-This is a simple Flask API for user creation and retrieval, featuring a SQLite database. It is first complied into a docker image and later deployed in a kubernetes cluster.
+This is a simple Flask API for user creation and retrieval, featuring a SQLite database. It is first complied into a docker image and which is then deployed in a kubernetes cluster in minikube and finally integrated into GitHub Actions CI-CD.
 
 ## Table of Contents
 
@@ -8,15 +8,17 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
    - [Prerequisites](#prerequisites)
    - [Installation](#installation)
    - [Running the Server](#running-the-server)
+   - [Test](#Test)
 2. [API Endpoints](#api-endpoints)
    - [Create User](#create-user-endpoint)
    - [Get User](#get-user-endpoint)
 3. [Request/Response Formats](#requestresponse-formats)
    - [Create User](#create-user-post-apiusers)
    - [Get User](#get-user-get-apiusersuser_id)
-4. [Error Handling](#error-handling)
-5. [Dockerization](#dockerization)
-6. [Kubernetes Deployment with Minikube](#kubernetes-deployment-with-minikube)
+4. [Password Strength Validation](#Password-Strength-Validation)
+5. [Error Handling](#error-handling)
+6. [Dockerization](#dockerization)
+7. [Kubernetes Deployment with Minikube](#kubernetes-deployment-with-minikube)
    - [Install Minikube](#install-minikube)
    - [Kubernetes Manifests](#kubernetes-manifests)
       - [Deployment](#deployment)
@@ -28,12 +30,11 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
       - [Step 4: Verify the Loaded Image](#step-4-verify-the-loaded-image)
    - [Apply Manifests](#apply-manifests)
    - [Access the API](#access-the-api)
-7. [GitHub Actions](#github-actions)
+8. [GitHub Actions](#github-actions)
    - [Super-Linter](#super-linter)
-8. [Conclusion](#conclusion)
+9. [Conclusion](#conclusion)
 
 ## Getting Started
-
 ### Prerequisites
 
 - Flask
@@ -41,7 +42,7 @@ This is a simple Flask API for user creation and retrieval, featuring a SQLite d
 - Werkzeug
 - SQLAlchemy
 
-### Installation
+## Installation
 
 ```bash
 git clone https://github.com/Syed-Hamza-Zahir/Prima.git
@@ -56,19 +57,23 @@ source venv/bin/activate  # On macOS/Linux
 pip install -r requirements.txt
 ```
 
-### Running the Server
+## Running the Server
 ```bash
 cd app
 python app.py
 ```
-The server will be running at http://localhost:5000.
+The server will be running at http://localhost:8080.
 
-### Running the Server
-```bash
-cd app
-python app.py
-```
-The server will be running at http://localhost:5000.
+## Test
+To verify the proper functioning of the server, you can use the following methods:
+
+- **Curl Endpoint:**
+  ```bash
+  curl http://localhost:8080/api/users
+  ```
+  **Use Scripts:**
+Run the provided 'create-user.py' and 'get-user.py' scripts to test the create and retrieve user endpoints.
+
 
 ## API Endpoints
 ### 1. Create User
@@ -139,6 +144,16 @@ Response:
   "email": "john@example.com",
 }
 ```
+## Password Strength Validation
+The app now includes password strength validation during user creation. Passwords must meet the following criteria:
+
+At least 8 characters long.
+Contains at least one capital letter.
+Contains at least one number.
+Contains at least one special character.
+
+### To do: add email validation
+
 ## Error Handling
 - 400 Bad Request: Invalid input data.
 - 404 Not Found: User not found.
