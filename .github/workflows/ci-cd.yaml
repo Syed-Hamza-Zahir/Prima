@@ -6,24 +6,20 @@ on:
       - main
 
 jobs:
-  super-lint:
-    name: Super-Linter
-    on:
-      push:
-        branches:
-          - main
+  # super-lint:
+  #   name: Super-Linter
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Run Super-Linter
-        uses: github/super-linter@v4
-        env:
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Run Super-Linter
+  #       uses: github/super-linter@v4
+  #       env:
+  #         DEFAULT_BRANCH: main
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
     runs-on: ubuntu-latest
