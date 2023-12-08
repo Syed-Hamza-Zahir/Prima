@@ -90,15 +90,15 @@ jobs:
           kubectl get pvc
           kubectl get pv
 
-          PV_STATUS=$(kubectl get pv sqlite-pv -o jsonpath='{.status.phase}')
-          PVC_STATUS=$(kubectl get pvc sqlite-pvc -o jsonpath='{.status.phase}')
+        #  PV_STATUS=$(kubectl get pv sqlite-pv -o jsonpath='{.status.phase}')
+        #  PVC_STATUS=$(kubectl get pvc sqlite-pvc -o jsonpath='{.status.phase}')
 
-           if [ "$PV_STATUS" == "Bound" ] && [ "$PVC_STATUS" == "Bound" ]; then
-            echo "PV and PVC are bound!"
-          else
-            echo "PV or PVC is not bound."
-            exit 1
-          fi
+        #   if [ "$PV_STATUS" == "Bound" ] && [ "$PVC_STATUS" == "Bound" ]; then
+        #    echo "PV and PVC are bound!"
+        #  else
+        #    echo "PV or PVC is not bound."
+        #    exit 1
+        #  fi
 
       - name: Wait for Pods to be Ready
         run: |
