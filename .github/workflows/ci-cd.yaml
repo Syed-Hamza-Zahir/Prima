@@ -92,44 +92,45 @@ jobs:
 
       - name: Test Deployment
         run: |
-            # Get the Minikube IP
-            MINIKUBE_IP=$(minikube ip)
-            echo "Minikube IP: $MINIKUBE_IP"
+          # Get the Minikube IP
+          MINIKUBE_IP=$(minikube ip)
+          echo "Minikube IP: $MINIKUBE_IP"
 
-            # Get the NodePort assigned to the service
-            NODE_PORT=$(kubectl get svc flask-api-service -o jsonpath='{.spec.ports[0].nodePort}')
-            echo "NodePort: $NODE_PORT"
-      
-            # Define the API endpoint
-            api_url="http://$MINIKUBE_IP:$NODE_PORT/api/users"
+          # Get the NodePort assigned to the service
+          NODE_PORT=$(kubectl get svc flask-api-service -o jsonpath='{.spec.ports[0].nodePort}')
+          echo "NodePort: $NODE_PORT"
 
-            # Test user data
-            username="test"
-            email="test"
-            password="testTEST21"!"
+          # Define the API endpoint
+          api_url="http://$MINIKUBE_IP:$NODE_PORT/api/users"
 
-            # Create user data JSON
-            user_data='{"username":"'$username'", "email":"'$email'", "password":"'$password'"}'
+          # Test user data
+          username="test"
+          email="test"
+          password="testTEST21\"!"
 
-            # Make a POST request to create the user
-            response=$(curl -s -w "%{http_code}" -X POST -H "Content-Type: application/json" -d "$user_data" "$api_url")
+          # Create user data JSON using jq
+          user_data=$(jq -n --arg username "$username" --arg email "$email" --arg password "$password" '{"username": $username, "email": $email, "password": $password}')
 
-            # Extract status code from the response
-            status_code=${response:(-3)}
+          # Make a POST request to create the user
+          response=$(curl -s -w "%{http_code}" -X POST -H "Content-Type: application/json" -d "$user_data" "$api_url")
 
-            # Print the response
-            echo "Status Code: $status_code"
-            response_body=${response::-3}
-            echo "Response Body: $response_body"
+          # Extract status code from the response
+          status_code=${response:(-3)}
 
-            # Check if the user was created successfully
-            if [ "$status_code" -eq 201 ]; then
-                echo "User created successfully"
-            else
-                # Print an error message if user creation failed
-                echo "User creation failed. Status code: $status_code"
-                exit 1
-            fi
+          # Print the response
+          echo "Status Code: $status_code"
+          response_body=${response::-3}
+          echo "Response Body: $response_body"
+
+          # Check if the user was created successfully
+          if [ "$status_code" -eq 201 ]; then
+              echo "User created successfully"
+          else
+              # Print an error message if user creation failed
+              echo "User creation failed. Status code: $status_code"
+              exit 1
+          }
+
 
 
 
