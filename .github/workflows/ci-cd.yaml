@@ -129,7 +129,7 @@ jobs:
               # Print an error message if user creation failed
               echo "User creation failed. Status code: $status_code"
               exit 1
-          }
+          
 
 
 
